@@ -77,6 +77,7 @@ function AppShellContent({ children }: AppShellProps) {
           {dataMode === "demo" ? <StorageStatusBanner /> : null}
           <main
             id="main-content"
+            tabIndex={-1}
             className="mx-auto w-full max-w-6xl px-4 pt-6 pb-24 sm:px-6 md:pt-10 md:pb-10 lg:px-8"
           >
             {children}

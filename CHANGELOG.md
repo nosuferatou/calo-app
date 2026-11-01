@@ -56,6 +56,8 @@ The project follows a simplified version of Keep a Changelog.
 - Clearing the cloud meal-cart draft now happens before the diary entries are inserted, and the draft is restored if the insert fails. Previously a failed cleanup write left the saved items in `meal_cart_drafts`, so a later reload could log the same meal a second time.
 - A failed saved-meal item write removes the parent `saved_meals` row instead of leaving an empty ghost meal in My Collection; a failed diary entry write now rolls back the meal sessions it had just created rather than leaving orphan empty sessions.
 - Read the persisted theme from the versioned settings envelope so Light, Dark, and System preferences survive full page loads.
+- Activating the skip link now moves keyboard focus into the main content region. The link targeted `main#main-content`, but the element was not focusable, so focus stayed on `<body>` and keyboard users did not land inside the main landmark.
+- The catalog quantity field accepts decimal grams. It carried `min="1" step="1"`, which marked a valid value such as 0.5 g as a failing HTML constraint while the cart editor already accepted decimals.
 
 ### Planned
 

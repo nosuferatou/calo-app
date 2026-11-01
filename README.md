@@ -6,8 +6,8 @@ Interface in English and Bahasa Indonesia, with light, dark, and system themes.
 
 CALO runs in two data modes:
 
-- **Demo mode** — anonymous visitors. Everything stays in this browser's LocalStorage, and
-  a status banner says so.
+- **Demo mode** — anonymous visitors. Everything stays in this browser's LocalStorage, and a
+  status banner appears when that storage is read-only or unavailable.
 - **Cloud mode** — signed-in accounts. Reads and writes go to your own Supabase project
   through repositories that derive the owner from the verified auth token, with Row Level
   Security as the final authority. A failed cloud write is reported to the user; it never

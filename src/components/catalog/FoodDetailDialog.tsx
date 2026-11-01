@@ -92,8 +92,8 @@ export function FoodDetailDialog({ food, onOpenChange }: FoodDetailDialogProps) 
             <Input
               id="food-detail-grams"
               type="number"
-              min="1"
-              step="1"
+              min="0.1"
+              step="0.1"
               inputMode="decimal"
               value={grams}
               onChange={(event) => {

@@ -592,7 +592,14 @@ The following approved-scope items are deliberately deferred because they do not
 - LocalStorage-to-cloud migration: acceptable for launch because demo mode and authenticated mode are visually and architecturally separate, cloud data is loaded only after identity is verified, and no interface implies that local data moves automatically.
 - Google OAuth: the UI is behind a disabled-by-default flag and already states that Google sign-in is not configured for this environment.
 
-Known minor issue carried into launch: a partial write on diary entries reuses the "saved meal" wording (`cloud.partialSavedMeal`), so the toast can name the wrong object even though the rollback behaviour is correct.
+Known issues carried into launch:
+
+- A partial write on diary entries reuses the "saved meal" wording (`cloud.partialSavedMeal`), so the toast can name the wrong object even though the rollback behaviour is correct.
+- Selecting a past date in Food Diary and then choosing "Add food" opens the cart with today's date, so the historical date must be re-entered. The date is still set inside Diary, but the carry-through contradicts the intent of the historical-logging rule and needs a small cart-state change.
+- The dashboard current-weight tile can keep the previous value after a same-day weight entry, while the change calculation already uses the new record.
+- The dashboard primary "Add food" control is 40 px tall at 390 px width; bottom navigation targets measure 56 px. `DESIGN.md` sets no minimum tap-target size, so this is an unconfirmed polish item rather than a rule violation.
+
+Fixed during the 2026-11-02 browser QA pass: the skip link now moves focus into `main` (it previously left focus on `<body>`), and the catalog quantity field accepts decimals (`min="0.1" step="0.1"`) instead of marking a value such as 0.5 g invalid.
 
 ---
 
