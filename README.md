@@ -81,6 +81,10 @@ application code, migrations, and checks are ready; what remains is owner-contro
 6 lists the Dashboard configuration. Read `NUTRITION_CALCULATIONS.md` first if you intend to
 change how targets are calculated.
 
+Build on the hosting platform, never upload a local `.next`: `NEXT_PUBLIC_*` values are
+inlined into the client bundle at build time, so a local build points at the local Supabase
+origin.
+
 Built-in foods are a labeled initial dataset, not verified reference data: the catalog states
 "Sample dataset. Values are illustrative and are not verified nutrition data," and each food's
 source note is shown in its detail dialog. Replace the dataset with sourced records before

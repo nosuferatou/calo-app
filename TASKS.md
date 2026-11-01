@@ -516,6 +516,9 @@ Local preparation (no external account access required):
 - [x] Configure production security headers and HSTS (`next.config.ts`, production-only).
 - [x] Enforce HTTPS-only Supabase URL outside localhost (`src/lib/supabase/config.ts`).
 - [x] Run the local pgTAP RLS suite against the applied schema (57 tests).
+- [x] Confirm no secret or local-state file is tracked: only `.env.example` is committed, while `.env.local`, `supabase/.temp`, `supabase/.branches`, `.qoder/settings.local.json`, and vendored skill binaries are ignored.
+- [x] Serve the production build locally and confirm the security headers on app and auth routes, a clean server log, and a 200 from every page.
+- [x] Add the keyboard skip link to the main content and a global reduced-motion rule.
 - [ ] Push the verified branch to the GitHub remote.
 
 Requires explicit owner authorization or account access:
@@ -525,10 +528,16 @@ Requires explicit owner authorization or account access:
 - [ ] Apply the reviewed migration and RLS policies to the hosted project.
 - [ ] Re-run the pgTAP suite against the hosted database.
 - [ ] Configure the site URL, redirect URLs, and a production email sender for password recovery.
-- [ ] Create the Vercel project and set production environment variables
-      (`NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`,
-      `NEXT_PUBLIC_SITE_URL`, optional `NEXT_PUBLIC_GOOGLE_OAUTH_ENABLED`).
-- [ ] Deploy preview, then production, on the approved domain.
+- [ ] Create the Vercel project and set `NEXT_PUBLIC_SUPABASE_URL`,
+      `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`, and optional
+      `NEXT_PUBLIC_GOOGLE_OAUTH_ENABLED` for **build time** in Preview and Production, not
+      runtime only. These variables are inlined into the client bundle: the `.next` output
+      built locally contains `http://127.0.0.1:54321` and must never be promoted, only
+      rebuilt on the hosting platform. There is no site-URL variable — the Site URL and the
+      callback/recovery redirect allow-list are configured in the Supabase Auth dashboard.
+- [ ] Deploy preview, then production, on the approved domain, and confirm the response
+      headers on the deployed origin: the CSP `connect-src` must name the hosted Supabase
+      origin rather than localhost.
 - [ ] Verify deployed routes, signup/login, recovery, ownership isolation, and logs.
 
 **Completion criteria:** CALO is accessible through a working Vercel deployment backed by the migrated production Supabase project.
@@ -546,7 +555,7 @@ The MVP runs in two data modes selected by identity. Anonymous visitors use the 
 | `/` | Ready | Greeting, daily calories, macro progress, meal summary, recent activity, weight summary, quick add |
 | `/diary` | Ready | Month calendar, logged-day markers, meal sessions, edit/duplicate/delete entry, delete/duplicate session, copy previous day |
 | `/catalog` | Ready | Search with synonyms, recent searches, categories, grid/list toggle, food detail, favorites, add to meal cart |
-| `/collection` | Ready | Favorite foods, saved meals, custom foods, search, duplicate/delete, load into cart |
+| `/collection` | Ready | Favorite foods (remove), saved meals (duplicate and delete), custom foods (create and edit only — no delete or duplicate), search, load into cart |
 | `/analytics` | Ready | 7/30-day averages excluding unlogged days, calorie and macro charts, weight CRUD and trend |
 | `/settings` | Ready | Profile, calculated and manual targets, profile-triggered recalculation, theme, language, JSON export/import with summary, two-step reset, storage status |
 | `/onboarding` | Ready | Five-step wizard, profile validation, calculated target review, editable manual fallback |
