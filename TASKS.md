@@ -241,7 +241,7 @@ Do not attempt to implement the entire application in one task.
 - [ ] Establish food subcategory structure.
 - [x] Define food ID conventions.
 - [x] Define gram-based nutrition values.
-- [ ] Establish food data validation.
+- [x] Establish food data validation (`validateFoodDataset` in `src/lib/food-data.ts`: unique IDs, required fields, valid categories, source references, plausibility advisories).
 
 ### 3.2 Food Database
 
@@ -249,11 +249,11 @@ Do not attempt to implement the entire application in one task.
 - [x] Build initial Indonesian food dataset.
 - [x] Build initial international food dataset.
 - [x] Include cooking-method-specific food entries.
-- [ ] Validate nutritional values.
-- [ ] Verify source references for every entry.
-- [ ] Target 200–500 food entries.
+- [ ] DEFERRED after v1.0 — Validate nutritional values against cited source tables.
+- [ ] DEFERRED after v1.0 — Verify source references for every entry.
+- [ ] DEFERRED after v1.0 — Target 200–500 food entries.
 
-**Status:** A 50-item demo dataset (`src/data/foods.ts`) covers Indonesian and international foods with source labels. Values are illustrative and not verified; the production dataset and per-entry source verification remain pending.
+**Status:** A 50-item initial curated dataset (`src/data/foods.ts`) covers Indonesian and international foods. Every record carries the sample-dataset provenance string, the catalog page displays a visible "values are illustrative and not verified nutrition data" notice, and `validateFoodDataset` blocks structural defects (one advisory is recorded and tolerated: `food-mango` fiber+sugar marginally exceeds total carbohydrates). Expanding to 200–500 verified entries requires licensed food-composition data; inventing entries to hit a count was explicitly rejected. This is a known launch limitation, not a blocker: the catalog remains usable, correctly labeled, and custom foods let users record verified values themselves.
 
 ### 3.3 Food Catalog UI
 
@@ -509,17 +509,29 @@ Do not attempt to implement the entire application in one task.
 
 ## 14. Phase 11 — Deployment
 
-- Prepare production configuration.
-- Verify Git repository.
-- Push project to GitHub.
-- Configure Vercel project.
-- Deploy preview.
-- Test deployed application.
-- Verify production build.
-- Deploy production version.
-- Document deployment process.
+Local preparation (no external account access required):
 
-**Completion criteria:** CALO is accessible through a working Vercel deployment.
+- [x] Verify Git repository and create recovery checkpoints.
+- [x] Verify production build.
+- [x] Configure production security headers and HSTS (`next.config.ts`, production-only).
+- [x] Enforce HTTPS-only Supabase URL outside localhost (`src/lib/supabase/config.ts`).
+- [x] Run the local pgTAP RLS suite against the applied schema (57 tests).
+- [ ] Push the verified branch to the GitHub remote.
+
+Requires explicit owner authorization or account access:
+
+- [ ] Confirm the target hosted Supabase project identity before touching it.
+- [ ] Inspect the hosted project, verify it is empty, and confirm backup/rollback posture.
+- [ ] Apply the reviewed migration and RLS policies to the hosted project.
+- [ ] Re-run the pgTAP suite against the hosted database.
+- [ ] Configure the site URL, redirect URLs, and a production email sender for password recovery.
+- [ ] Create the Vercel project and set production environment variables
+      (`NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`,
+      `NEXT_PUBLIC_SITE_URL`, optional `NEXT_PUBLIC_GOOGLE_OAUTH_ENABLED`).
+- [ ] Deploy preview, then production, on the approved domain.
+- [ ] Verify deployed routes, signup/login, recovery, ownership isolation, and logs.
+
+**Completion criteria:** CALO is accessible through a working Vercel deployment backed by the migrated production Supabase project.
 
 ---
 
@@ -558,6 +570,20 @@ The MVP runs in two data modes selected by identity. Anonymous visitors use the 
 - Google OAuth is implemented behind a disabled-by-default flag and is not configured or tested.
 - The explicit, validated, conflict-aware LocalStorage-to-cloud migration flow is not implemented; no local data is moved today.
 - No automated end-to-end or browser accessibility audit has been run.
+
+### Deferred for the first production release
+
+The following approved-scope items are deliberately deferred because they do not compromise the core logging, target, diary, or analytics workflows:
+
+- Custom-food delete and duplicate, and favorite-food delete and duplicate.
+- Saved-meal inline editing (duplicate, delete, and load into cart remain available).
+- Usage-based popularity ranking and food recommendations.
+- Circular calorie progress gauge (deliberately replaced by the accessible linear `Progress` component) and expandable food details on the Dashboard.
+- Food subcategory structure and the 200–500 verified-entry catalog.
+- LocalStorage-to-cloud migration: acceptable for launch because demo mode and authenticated mode are visually and architecturally separate, cloud data is loaded only after identity is verified, and no interface implies that local data moves automatically.
+- Google OAuth: the UI is behind a disabled-by-default flag and already states that Google sign-in is not configured for this environment.
+
+Known minor issue carried into launch: a partial write on diary entries reuses the "saved meal" wording (`cloud.partialSavedMeal`), so the toast can name the wrong object even though the rollback behaviour is correct.
 
 ---
 

@@ -33,6 +33,11 @@ The project follows a simplified version of Keep a Changelog.
 
 ### Changed
 
+- Applied production security headers in `next.config.ts` (Content-Security-Policy with the Supabase origin in `connect-src`, `X-Content-Type-Options`, `X-Frame-Options`, `Referrer-Policy`, `Permissions-Policy`, and HSTS). The policy is production-only so `next dev` keeps its hot-reload transport.
+- Required `https://` for `NEXT_PUBLIC_SUPABASE_URL` outside localhost, so a deployment cannot silently send session cookies over plaintext; added tests for both the remote rejection and the local exception.
+- Recorded the four local recovery checkpoints (`chore: secure project ignore rules`, `feat: add CALO application and Supabase foundation`, `chore: migrate agent skills to .agents`, `docs: finalize Phase 3E2 documentation`) and stopped tracking the vendored Impeccable engine binary, which the skill launcher resolves from the per-user verified cache.
+- Replaced the stale onboarding demo notice that claimed authentication and cloud sync were "not connected yet" with accurate English and Bahasa Indonesia copy; removed the now-unused `cloud.draftCleanupFailed` string.
+- Added `validateFoodDataset` (`src/lib/food-data.ts`) as the food-catalog quality guard and documented the initial curated dataset as a deferred-verification launch limitation in `TASKS.md`, together with the deferred feature list for the first production release.
 - Aligned product and technical documentation with the approved public multi-user architecture: email/password and Google OAuth authentication, Supabase backend, PostgreSQL database, Row Level Security, and Vercel deployment.
 - Clarified that the 1,200 kcal/day and 1,500 kcal/day calorie floors are algorithmic guardrails, not universal medically safe minimums or guarantees of safety.
 - Linked the Phase 3A Supabase foundation proposal from the technical architecture and roadmap.
@@ -46,6 +51,8 @@ The project follows a simplified version of Keep a Changelog.
 
 ### Fixed
 
+- Clearing the cloud meal-cart draft now happens before the diary entries are inserted, and the draft is restored if the insert fails. Previously a failed cleanup write left the saved items in `meal_cart_drafts`, so a later reload could log the same meal a second time.
+- A failed saved-meal item write removes the parent `saved_meals` row instead of leaving an empty ghost meal in My Collection; a failed diary entry write now rolls back the meal sessions it had just created rather than leaving orphan empty sessions.
 - Read the persisted theme from the versioned settings envelope so Light, Dark, and System preferences survive full page loads.
 
 ### Planned
