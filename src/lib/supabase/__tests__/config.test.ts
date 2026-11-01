@@ -17,6 +17,24 @@ describe("getSupabaseConfig", () => {
     ).toThrow("NEXT_PUBLIC_SUPABASE_URL must be a valid HTTP(S) URL.");
   });
 
+  it("rejects plaintext http for a remote Supabase host", () => {
+    expect(() =>
+      getSupabaseConfig({
+        url: "http://supabase.example",
+        publishableKey: "test-publishable-key",
+      }),
+    ).toThrow("NEXT_PUBLIC_SUPABASE_URL must use https:// outside localhost.");
+  });
+
+  it("allows plaintext http only for local development hosts", () => {
+    expect(
+      getSupabaseConfig({
+        url: "http://127.0.0.1:54321",
+        publishableKey: "test-publishable-key",
+      }).url,
+    ).toBe("http://127.0.0.1:54321");
+  });
+
   it("returns trimmed configuration values", () => {
     expect(
       getSupabaseConfig({

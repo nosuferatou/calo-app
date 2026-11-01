@@ -38,5 +38,16 @@ export function getSupabaseConfig(
     throw new Error("NEXT_PUBLIC_SUPABASE_URL must be a valid HTTP(S) URL.");
   }
 
+  const isLocalHost =
+    parsedUrl.hostname === "localhost" ||
+    parsedUrl.hostname === "127.0.0.1" ||
+    parsedUrl.hostname === "::1";
+
+  if (parsedUrl.protocol === "http:" && !isLocalHost) {
+    throw new Error(
+      "NEXT_PUBLIC_SUPABASE_URL must use https:// outside localhost.",
+    );
+  }
+
   return { url, publishableKey };
 }
