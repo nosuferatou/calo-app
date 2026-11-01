@@ -3,6 +3,7 @@ import type { LanguagePreference } from "@/types/domain";
 export const en = {
   "app.name": "CALO",
   "common.cancel": "Cancel",
+  "common.skipToContent": "Skip to main content",
   "common.save": "Save",
   "common.saving": "Saving…",
   "common.delete": "Delete",
@@ -690,6 +691,7 @@ export type TranslationKey = keyof typeof en;
 export const id: Record<TranslationKey, string> = {
   "app.name": "CALO",
   "common.cancel": "Batal",
+  "common.skipToContent": "Lompat ke konten utama",
   "common.save": "Simpan",
   "common.saving": "Menyimpan…",
   "common.delete": "Hapus",

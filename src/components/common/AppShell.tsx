@@ -63,12 +63,22 @@ export function AppShell({ children }: AppShellProps) {
 
 function AppShellContent({ children }: AppShellProps) {
   const { dataMode } = useDemoData();
+  const { t } = useI18n();
   return (
       <div className="min-h-screen">
+        <a
+          href="#main-content"
+          className="sr-only focus:not-sr-only focus:absolute focus:top-3 focus:left-3 focus:z-50 focus:rounded-lg focus:border focus:border-slate-300 focus:bg-white focus:px-3 focus:py-2 focus:text-sm focus:font-medium focus:shadow-lg dark:focus:border-slate-700 dark:focus:bg-slate-900"
+        >
+          {t("common.skipToContent")}
+        </a>
         <Navigation />
         <div className="md:pl-60">
           {dataMode === "demo" ? <StorageStatusBanner /> : null}
-          <main className="mx-auto w-full max-w-6xl px-4 pt-6 pb-24 sm:px-6 md:pt-10 md:pb-10 lg:px-8">
+          <main
+            id="main-content"
+            className="mx-auto w-full max-w-6xl px-4 pt-6 pb-24 sm:px-6 md:pt-10 md:pb-10 lg:px-8"
+          >
             {children}
           </main>
         </div>
