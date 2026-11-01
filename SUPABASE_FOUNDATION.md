@@ -1,17 +1,17 @@
 # CALO — Supabase Integration Foundation
 
-**Status:** Phases 3A-3D and the Phase 3E1 repository layer are implemented locally. The Phase 3E2 provider was verified with two synthetic browser accounts, refreshes, account switching, an expired synthetic session, and a simulated local REST outage. TypeScript, lint, 215 automated tests, production build, and all 57 local pgTAP tests passed. Google OAuth remains unconfigured. Custom-food create/edit is implemented through owner-scoped repository writes; delete, duplicate, and local-to-cloud migration remain separate approved work.
+**Status:** Phases 3A-3E2 are implemented against the local stack: authenticated accounts read and write through claims-verified, owner-scoped repositories, while anonymous visitors keep the demo provider. TypeScript, lint, 223 automated tests, production build, and all 57 local pgTAP tests passed. Google OAuth remains unconfigured. Custom-food create/edit is implemented through owner-scoped repository writes; delete, duplicate, and local-to-cloud migration remain separate approved work.
 **Prepared:** 2026-11-01
 **Scope:** Architecture and local-only Supabase foundation, database/RLS, and authentication. The hosted project and local CALO demo data have not been changed or uploaded.
 
 ## 1. Current readiness
 
 - The app uses Next.js 16.4.3 App Router, React 19, TypeScript, Zod 4, and Vitest 4.
-- CALO data features still use the `DemoDataProvider` and centralized, versioned LocalStorage client. Authentication does not yet sync or migrate demo data.
+- Anonymous visitors use the `DemoDataProvider` and the centralized, versioned LocalStorage client. Authenticated accounts use `CloudDataProvider`, which reads and writes through claims-verified repositories and never falls back to LocalStorage after a cloud error. Sign-in does not yet sync or migrate existing demo data.
 - `src/types/database.ts` is generated from the locally applied public schema with the Supabase CLI. Browser, server, and Proxy clients use this generated `Database` type.
 - `src/lib/repositories/` exposes typed browser/server repository factories for all 12 current user-owned tables. Each operation obtains the owner from `auth.getClaims()`; RLS remains the database authorization boundary.
 - Repository mappers validate database records and preserve logged food nutrition and saved-meal food snapshots exactly as stored. Empty collections return empty arrays; missing singleton records return `null` (search history returns an empty list).
-- The repository API is not wired into `DemoDataProvider`; existing anonymous demo mode and LocalStorage data remain unchanged. No upload or migration occurs.
+- The repository API is not wired into `DemoDataProvider`; existing anonymous demo mode and LocalStorage data remain unchanged. Cloud persistence is a separate provider selected after identity is verified.
 - Storage domains use independent version 1 envelopes. Invalid data is quarantined without deleting the original; newer versions are read-only.
 - `@supabase/ssr` and `@supabase/supabase-js` are installed. Browser and request-scoped server clients, environment validation, and the Next.js 16 session-refresh Proxy are implemented.
 - Local Supabase configuration and versioned migrations are under `supabase/`. The schema is applied only to the local database: 12 user-owned tables, 48 RLS policies, and 57 pgTAP tests passed.
@@ -25,7 +25,8 @@
 - Automated coverage includes auth validation, form behavior, callback/profile provisioning, safe redirects, Proxy behavior, and translation parity. Local email/password signup, sign-in, recovery, password reset, sign-out, and localized navigation were manually browser-tested. Google OAuth provider testing remains pending because local credentials are not configured.
 - Several persisted entity schemas currently validate only common metadata and pass other fields through. `readStorage()` alone is therefore not sufficient validation for cloud upload; explicit migration still needs complete, domain-specific validation.
 - Built-in foods in `src/data/foods.ts` are version-controlled static demo data. Their nutritional values are explicitly illustrative and unverified; they are not proposed as trusted public database records.
-- `CustomFood` and its storage schema exist, but custom-food creation and management UI are not implemented.
+- `CustomFood` and its storage schema exist, and the create/edit UI in My Collection writes through owner-scoped repositories. Delete and duplicate are not implemented.
+- Production responses carry CSP, HSTS, `X-Frame-Options: DENY`, `X-Content-Type-Options: nosniff`, a strict `Referrer-Policy`, and a `Permissions-Policy` that denies camera, microphone, geolocation, and payment. The CSP `connect-src` is derived from `NEXT_PUBLIC_SUPABASE_URL`, and configuration rejects an http Supabase URL on any host that is not localhost.
 
 ## 2. Proposed database model
 
@@ -127,7 +128,8 @@ Before authentication or database features are enabled:
 ```dotenv
 NEXT_PUBLIC_SUPABASE_URL=
 NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=
-NEXT_PUBLIC_SITE_URL=http://localhost:3000
+# Enable only after the Google provider and redirect URLs exist in Supabase.
+NEXT_PUBLIC_GOOGLE_OAUTH_ENABLED=false
 ```
 
 The publishable key is designed for browser use and is not an authorization mechanism. RLS must protect the database. No secret/service-role key belongs in this template.
@@ -149,10 +151,10 @@ The publishable key is designed for browser use and is not an authorization mech
 - [x] Implement cookie-based browser/server clients and the Next.js 16 session-refresh Proxy.
 - [x] Add focused configuration and client initialization tests.
 - [x] Generate database types from the local schema and type the browser/server/Proxy clients.
-- [ ] Connect authenticated repositories to the app data provider while preserving anonymous demo mode.
+- [x] Connect authenticated repositories to the app data provider while preserving anonymous demo mode. (Delivered in Phase 3E2; see below.)
 - [ ] Implement explicit migration preview, validation, conflict handling, resumable insert, and verification.
 
-The client and repository layers alone do not provide app-level cloud persistence; features still use the demo provider.
+The client and repository layers alone do not provide app-level cloud persistence; the Phase 3E2 provider selection does, and anonymous demo mode is unchanged by it.
 
 ### Phase 3C: database schema and RLS
 
@@ -207,7 +209,7 @@ No Supabase schema or RLS policy changes were made for Phase 3E2. Browser checks
 
 ### Dependency audit
 
-The read-only `npm audit` reported 16 moderate advisories, all in development-only ESLint tooling and its transitive dependency tree. `npm audit --omit=dev` reported zero vulnerabilities in production dependencies. npm's proposed audit fixes require major dependency changes; none were applied. Recheck compatibility before choosing a manual upgrade path.
+The read-only `npm audit` reported 16 moderate advisories, all in development-only ESLint tooling and its transitive dependency tree. `npm audit --omit=dev` reported zero vulnerabilities in production dependencies (rechecked 2026-11-02: unchanged). npm's proposed audit fixes require major dependency changes; none were applied. Recheck compatibility before choosing a manual upgrade path.
 
 ## 9. Official guidance reviewed
 

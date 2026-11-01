@@ -1,36 +1,87 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# CALO
 
-## Getting Started
+Minimalist nutrition and calorie tracker: log meals by category, follow calories and
+macronutrients against personal targets, review history and trends, and track body weight.
+Interface in English and Bahasa Indonesia, with light, dark, and system themes.
 
-First, run the development server:
+CALO runs in two data modes:
+
+- **Demo mode** — anonymous visitors. Everything stays in this browser's LocalStorage, and
+  a status banner says so.
+- **Cloud mode** — signed-in accounts. Reads and writes go to your own Supabase project
+  through repositories that derive the owner from the verified auth token, with Row Level
+  Security as the final authority. A failed cloud write is reported to the user; it never
+  falls back to LocalStorage.
+
+Signing in does not move demo data to the account yet. That migration is deliberately
+unbuilt until it has validation, a preview, and explicit confirmation.
+
+## Stack
+
+Next.js 16 App Router (Turbopack, Cache Components, Partial Prefetching), React 19,
+TypeScript, Tailwind CSS 4, Zod 4, Recharts, Vitest 4, Supabase (PostgreSQL, Auth, RLS,
+pgTAP). No backend other than Supabase, and no external nutrition API.
+
+## Requirements
+
+- Node.js — this workspace is verified on Node 26.
+- Docker, for the local Supabase stack.
+- The Supabase CLI is a pinned project dev dependency.
+
+## Local setup
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm install
+cp .env.example .env.local      # then fill in the local Supabase values
+npx supabase start              # API 54321, Postgres 54322, Studio 54323, Mailpit 54324
+npx supabase db push            # applies supabase/migrations to the LOCAL database only
+npm run dev                     # http://localhost:3000
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+`npx supabase start` prints the project URL, the publishable key, and the service-role key.
+Only the URL and the publishable key belong in `.env.local`. Never put a secret key in a
+`NEXT_PUBLIC_*` variable, and never commit `.env.local`.
 
-You can start editing the page by modifying `src/app/page.tsx`. The page auto-updates as you edit the file.
+Local email confirmation is disabled, so email/password sign-up returns a session
+immediately. Password-recovery mail is captured by Mailpit at http://127.0.0.1:54324.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Commands
 
-## Learn More
+| Command | What it does |
+| --- | --- |
+| `npm run dev` | Development server |
+| `npm run build` | Production build |
+| `npm start` | Serve the production build |
+| `npm test` | Vitest unit and integration suites |
+| `npm run lint` | ESLint |
+| `npx tsc --noEmit` | TypeScript typecheck |
+| `npx supabase test db` | pgTAP database tests (needs the local stack running) |
 
-To learn more about Next.js, take a look at the following resources:
+## Documentation
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+The documents below are the source of truth. If they conflict, follow the approved product
+requirements and ask before changing a technical or design decision.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+- `PRODUCT.md` — product intent and boundaries.
+- `PRD.md` — requirements, including the product rules in `AGENTS.md`.
+- `TECH_STACK.md` — architecture and technical decisions.
+- `DESIGN.md` — visual direction, navigation, themes, and accessibility rules.
+- `NUTRITION_CALCULATIONS.md` — the approved BMR, TDEE, target, and food-database assumptions.
+- `SUPABASE_FOUNDATION.md` — schema, RLS, authentication, migration design, and the
+  Supabase Dashboard checklist.
+- `TASKS.md` — task status and deferred scope.
+- `CHANGELOG.md` — notable changes.
+- `AGENTS.md` — mandatory instructions for AI coding agents.
 
-## Deploy on Vercel
+## Before any public deployment
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Deployment has not happened, and the hosted Supabase project has not been touched. The
+application code, migrations, and checks are ready; what remains is owner-controlled.
+`TASKS.md` section 14 lists the exact steps and stops, and `SUPABASE_FOUNDATION.md` section
+6 lists the Dashboard configuration. Read `NUTRITION_CALCULATIONS.md` first if you intend to
+change how targets are calculated.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Built-in foods are a labeled initial dataset, not verified reference data: the catalog states
+"Sample dataset. Values are illustrative and are not verified nutrition data," and each food's
+source note is shown in its detail dialog. Replace the dataset with sourced records before
+relying on it. CALO does not provide medical advice.
