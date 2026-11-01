@@ -1,49 +1,160 @@
-# Product
+# CALO — Product Overview
 
-<!-- impeccable:product-schema 1 -->
+**Product Name:** CALO  
+**Document Version:** 1.0  
+**Product Type:** Web Application  
+**Status:** MVP Development Preparation
 
-## Platform
+## 1. Product Vision
 
-web
+CALO is a simple, modern, and practical nutrition tracking application that helps users understand and manage their daily food intake.
 
-## Stack
+The product focuses on making food logging, calorie tracking, and nutritional monitoring straightforward without unnecessary complexity.
 
-Next.js, mobile-first web. Deploy target not yet decided.
+CALO is designed to be a personal tracking tool, not a nutrition education platform.
 
-## Users
+## 2. Target Audience
 
-People tracking what they eat day to day, most often alone, on a phone, in short bursts: at a kitchen counter, in a grocery aisle, at a restaurant table. Their job is to log what they ate and see how it lands against a calorie and macro goal without turning mealtime into data entry.
+CALO is intended for people interested in managing their nutrition and fitness goals, including:
 
-## Product Purpose
+- Beginners who want to start tracking calories.
+- People who want to monitor daily food intake.
+- Fitness enthusiasts who track macronutrients.
+- People pursuing weight loss, weight maintenance, or muscle gain.
 
-Calo logs food and tracks calories and macros against a personal goal. Success is a person who keeps logging past the first week because the app stays out of the way.
+## 3. Core Value Proposition
 
-## Positioning
+CALO provides:
 
-Privacy-first, local data: the record of what someone eats belongs to them, on their device. No account wall, no profile sold, no social feed. A tracker that treats food data as private by default is the claim a cloud-first competitor cannot honestly copy without rebuilding its model.
+- Simple food logging.
+- Indonesian and international food database.
+- Calorie and macronutrient tracking.
+- Personalized daily nutrition targets.
+- Food diary and historical tracking.
+- Nutrition and weight trend analytics.
+- User data ownership through browser storage and personal account storage.
 
-## Operating Context
+## 4. Product Principles
 
-Used one-handed on a phone, often while standing, often for under a minute at a time. Logging competes with eating, so the record has to survive interruptions and get picked up again later. The same person returns several times a day, every day.
+### Simplicity
 
-## Capabilities and Constraints
+Keep common actions easy to understand and complete.
 
-Confirmed: food logging, calorie and macro tracking toward a goal, mobile-first web on Next.js.
+### Accuracy
 
-Undecided and must not be invented: food database or nutrition API source, whether accounts or device sync exist at all, how goals are calculated, offline behavior, monetization, and deploy target.
+Use reliable nutritional references and consistent calculation methods.
 
-## Brand Commitments
+### Transparency
 
-Name: Calo. Nothing else confirmed — no logo, voice guide, palette, or typeface exists yet.
+Clearly communicate nutrition values, calculation results, and data limitations.
 
-## Evidence on Hand
+### User Control
 
-None. There is no logo, no food data, no real users, no testimonials, no benchmarks, and no press. Future work must not fabricate any of them; empty states say so plainly instead of filling the space with fake proof.
+Allow users to edit their profile, targets, food entries, and personal data.
 
-## Product Principles
+### Privacy
 
-1. Private by default. The log lives with the person who made it; anything that leaves the device is a choice they make, not a term they accept.
-2. Built for one hand, mid-meal. Every core action has to work standing up, interrupted, in under a minute.
-3. Return visits are the product. The habit of logging again tomorrow matters more than any single screen.
-4. Show what is known, never guess silently. Nutrition numbers come from real data or they are not shown.
-5. No invented credibility. No fake users, fake coaches, or made-up accuracy claims.
+Keep personal application data under the user's control, whether stored locally in the browser or in the user's own authenticated account storage.
+
+### Consistency
+
+Maintain consistent design patterns, terminology, and interactions.
+
+## 5. MVP Scope
+
+The first version focuses on:
+
+1. Onboarding and profile management.
+2. Nutrition target calculation.
+3. Food catalog and search.
+4. Custom food management.
+5. Meal Cart and food logging.
+6. Food Diary.
+7. Nutrition Dashboard.
+8. Favorite Foods and Saved Meals.
+9. Analytics and Weight Tracking.
+10. Settings and local data management.
+
+Authenticated user accounts and personal data storage are part of the approved architecture. See [PRD.md](http://PRD.md) Section 3.2 and [TECH\_[STACK.md](http://STACK.md).
+
+Refer to [PRD.md](http://PRD.md) for complete functional requirements.
+
+## 6. Product Limitations
+
+The MVP intentionally does not include:
+
+- External nutrition API.
+- AI food recognition.
+- Barcode scanning.
+- Water tracking.
+- Meal reminders.
+- Social features.
+- Nutrition learning center.
+- Weekly calorie targets.
+- Customizable dashboard layouts.
+
+User accounts and authenticated data storage are part of the approved architecture (Supabase). See [PRD.md](http://PRD.md) Section 3.2.
+
+For local or unauthenticated usage, application data is stored in the browser. Clearing browser data may cause data loss if the user has not exported a backup.
+
+## 7. Technology Direction
+
+- Next.js App Router
+- TypeScript
+- Tailwind CSS
+- shadcn/ui
+- Lucide Icons
+- Recharts
+- Supabase (backend, PostgreSQL database, authentication, Row Level Security)
+- LocalStorage (local preferences, temporary drafts, caching, pre-authentication data)
+- Git and GitHub
+- Vercel
+
+Refer to TECH\_[STACK.md](http://STACK.md) for the technical architecture.
+
+## 8. Brand Direction
+
+CALO uses a Minimalist &amp; Clean visual direction.
+
+Brand characteristics:
+
+- Modern
+- Minimal
+- Clear
+- Approachable
+- Practical
+- Fitness-oriented without looking overly technical
+
+The visual identity uses an abstract geometric icon paired with a modern sans-serif wordmark.
+
+Primary brand colors are blue and cyan, supported by neutral surfaces.
+
+Refer to [DESIGN.md](http://DESIGN.md) for the complete visual direction.
+
+## 9. Product Success Criteria
+
+The MVP should allow users to:
+
+- Complete onboarding.
+- Set and manage nutrition targets.
+- Find foods in the catalog.
+- Create custom foods.
+- Log meals with accurate nutritional calculations.
+- Review historical food intake.
+- Understand daily nutrition progress.
+- Track weight changes.
+- Export and restore application data.
+
+## 10. Source of Truth
+
+When making product decisions, follow this documentation hierarchy:
+
+1. [PRD.md](http://PRD.md) — approved product requirements.
+2. TECH\_[STACK.md](http://STACK.md) — approved technical direction.
+3. [DESIGN.md](http://DESIGN.md) — approved design direction.
+4. [TASKS.md](http://TASKS.md) — development roadmap.
+5. [PRODUCT.md](http://PRODUCT.md) — product overview.
+
+If implementation conflicts with approved requirements, stop and request clarification rather than silently changing the product.
+
+**End of PRODUCT v1.0**
