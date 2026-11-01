@@ -397,7 +397,16 @@ export function CloudDataProvider({
         return createdEntries;
       } catch (error) {
         if (createdSessions.length > 0) {
-          setSessions((current) => [...current, ...createdSessions]);
+          // Roll the just-created sessions back so a failed entry insert cannot
+          // leave empty sessions in the diary; the partial write is still
+          // reported to the user.
+          await Promise.all(
+            createdSessions.map((session) =>
+              repository.mealSessions
+                .delete(session.id, session.date, session.mealCategory)
+                .catch(() => false),
+            ),
+          );
           throw new RepositoryError(
             "partial-write",
             "Meal sessions were created, but food entries could not be saved.",
@@ -562,17 +571,23 @@ export function CloudDataProvider({
         ...nutrition,
       } satisfies FoodEntry;
     });
+    // Clear the stored draft before inserting, so a failed cleanup write cannot
+    // leave already-saved items behind for a later reload to log a second time.
+    if (!(await persistDraft([], cartCategory, cartDate))) {
+      toast({ title: t("cloud.writeFailed"), variant: "error" });
+      return { ok: false, count: 0 };
+    }
     const result = await perform(
       () => insertEntries(nextEntries),
       null,
     );
-    if (!result) return { ok: false, count: 0 };
+    if (!result) {
+      // Entries were not written: put the draft back so the cart stays recoverable.
+      await persistDraft(cartItems, cartCategory, cartDate);
+      return { ok: false, count: 0 };
+    }
     setCartItems([]);
     setCartOpen(false);
-    const cleared = await persistDraft([], cartCategory, cartDate);
-    if (!cleared) {
-      toast({ title: t("cloud.draftCleanupFailed"), variant: "error" });
-    }
     toast({ title: t("cart.saveSuccess"), variant: "success" });
     return { ok: true, count: result.length };
   }, [

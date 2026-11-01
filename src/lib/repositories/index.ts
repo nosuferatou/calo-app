@@ -757,6 +757,13 @@ export function createRepositories(
         .insert(insertItems)
         .select("*");
       if (itemError) {
+        // The item insert is one statement, so nothing was written: remove the
+        // parent instead of leaving an empty saved meal behind.
+        await client
+          .from("saved_meals")
+          .delete()
+          .eq("user_id", userId)
+          .eq("id", parent.id);
         throw new RepositoryError(
           "partial-write",
           "The saved meal was created, but its items could not be saved.",
@@ -765,6 +772,11 @@ export function createRepositories(
       }
       const savedItems = requireRows(itemRows, null);
       if (savedItems.length !== insertItems.length) {
+        await client
+          .from("saved_meals")
+          .delete()
+          .eq("user_id", userId)
+          .eq("id", parent.id);
         throw new RepositoryError(
           "partial-write",
           "The saved meal was created, but not all items were confirmed.",
