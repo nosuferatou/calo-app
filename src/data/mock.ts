@@ -61,8 +61,6 @@ export const mockWeightRecords: WeightRecord[] = [
   { id: "weight-mock-006", createdAt: CREATED_AT, updatedAt: CREATED_AT, weight: 78.6, loggedAt: localIso(todayKey(), 7, 0) },
 ];
 
-export const mockRecentSearches = ["nasi", "chicken", "tempeh"];
-
 const foodById = new Map(demoFoods.map((food) => [food.id, food]));
 
 function getFood(id: string): Food {

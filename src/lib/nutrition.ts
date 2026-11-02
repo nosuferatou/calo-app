@@ -70,31 +70,6 @@ export function sumFoodEntries(entries: FoodEntry[]): NutritionTotals {
   );
 }
 
-export function sumFullNutrition(entries: FoodEntry[]): FullNutritionTotals {
-  return entries.reduce<FullNutritionTotals>(
-    (totals, entry) => ({
-      calories: totals.calories + entry.calories,
-      protein: totals.protein + entry.protein,
-      carbohydrates: totals.carbohydrates + entry.carbohydrates,
-      fat: totals.fat + entry.fat,
-      fiber: totals.fiber + (entry.fiber ?? 0),
-      sugar: totals.sugar + (entry.sugar ?? 0),
-      saturatedFat: totals.saturatedFat + (entry.saturatedFat ?? 0),
-      sodium: totals.sodium + (entry.sodium ?? 0),
-    }),
-    {
-      calories: 0,
-      protein: 0,
-      carbohydrates: 0,
-      fat: 0,
-      fiber: 0,
-      sugar: 0,
-      saturatedFat: 0,
-      sodium: 0,
-    },
-  );
-}
-
 export function getCalorieStatus(
   consumed: number,
   target: number,

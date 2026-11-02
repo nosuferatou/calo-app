@@ -5,7 +5,6 @@ import type {
   Food,
   FoodEntry,
   MealCartDraft,
-  MealCategory,
   MealSession,
   NutritionTargets,
   SavedMeal,
@@ -395,8 +394,4 @@ export function foodToSnapshot(food: Food): NonNullable<Json> {
       : {}),
   };
   return snapshot;
-}
-
-export function toMealCategory(value: string): MealCategory {
-  return parseRecord(mealCategorySchema, value);
 }

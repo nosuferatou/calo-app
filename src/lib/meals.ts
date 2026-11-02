@@ -25,23 +25,6 @@ export function suggestMealCategory(date: Date = new Date()): MealCategory {
   return "snack";
 }
 
-export function groupEntriesByMeal(
-  entries: FoodEntry[],
-): Record<MealCategory, FoodEntry[]> {
-  const groups: Record<MealCategory, FoodEntry[]> = {
-    breakfast: [],
-    lunch: [],
-    dinner: [],
-    snack: [],
-  };
-
-  entries.forEach((entry) => {
-    groups[entry.mealCategory].push(entry);
-  });
-
-  return groups;
-}
-
 export interface MealSessionGroup {
   sessionId: string;
   loggedAt: string;

@@ -33,10 +33,6 @@ export class AppError extends Error {
   }
 }
 
-export function getUserErrorMessage(error: unknown): string {
-  return error instanceof AppError ? error.message : ERROR_MESSAGES.unexpected;
-}
-
 export function getErrorMessageKey(error: unknown): TranslationKey {
   const code = error instanceof AppError ? error.code : "unexpected";
 
