@@ -8,7 +8,10 @@ import {
   type ReactNode,
 } from "react";
 import Link from "next/link";
-import { AccountPreferencesContext } from "@/components/providers/AccountPreferencesContext";
+import {
+  AccountPreferencesContext,
+  type AccountPreferencesContextValue,
+} from "@/components/providers/AccountPreferencesContext";
 import { CloudDataProvider } from "@/components/providers/CloudDataProvider";
 import { DemoDataProvider } from "@/components/providers/DemoDataProvider";
 import { useI18n } from "@/hooks/use-i18n";
@@ -31,6 +34,10 @@ class IdentityTimeoutError extends Error {
 }
 
 type IdentityErrorReason = "timeout" | "network";
+
+const DEMO_ACCOUNT_PREFERENCES: AccountPreferencesContextValue = {
+  mode: "demo",
+};
 
 type IdentityState =
   | { status: "loading" }
@@ -212,7 +219,7 @@ export function AppDataProvider({ children }: { children: ReactNode }) {
   }
 
   return (
-    <AccountPreferencesContext.Provider value={{ mode: "demo" }}>
+    <AccountPreferencesContext.Provider value={DEMO_ACCOUNT_PREFERENCES}>
       <DemoDataProvider>{children}</DemoDataProvider>
     </AccountPreferencesContext.Provider>
   );

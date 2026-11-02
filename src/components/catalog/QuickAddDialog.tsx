@@ -52,7 +52,7 @@ export function QuickAddDialog({ open, onOpenChange }: QuickAddDialogProps) {
         />
       </div>
 
-      <ul className="mt-4 max-h-80 divide-y divide-slate-200 overflow-y-auto dark:divide-slate-800">
+      <ul className="mt-4 max-h-[min(20rem,45dvh)] divide-y divide-slate-200 overflow-y-auto overscroll-contain dark:divide-slate-800">
         {foods.map((food) => {
           const nutrition = scaleFoodNutrition(food, food.defaultGrams);
 

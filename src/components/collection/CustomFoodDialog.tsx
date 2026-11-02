@@ -6,8 +6,8 @@ import { useDemoData } from "@/components/providers/DemoDataProvider";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
+  DialogActionBar,
   DialogDescription,
-  DialogFooter,
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
@@ -146,7 +146,6 @@ export function CustomFoodDialog({
     <Dialog
       open={open}
       onOpenChange={onOpenChange}
-      className="max-h-[calc(100dvh-2rem)] overflow-y-auto"
     >
       <form onSubmit={handleSubmit} noValidate>
         <DialogHeader>
@@ -337,7 +336,7 @@ export function CustomFoodDialog({
           ) : null}
         </div>
 
-        <DialogFooter className="flex-row justify-end">
+        <DialogActionBar className="flex-row justify-end">
           <Button
             type="button"
             variant="outline"
@@ -355,7 +354,7 @@ export function CustomFoodDialog({
                   ? t("customFood.saveEdit")
                   : t("customFood.saveCreate")}
           </Button>
-        </DialogFooter>
+        </DialogActionBar>
       </form>
     </Dialog>
   );

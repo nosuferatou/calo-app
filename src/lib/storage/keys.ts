@@ -16,6 +16,15 @@ export const STORAGE_KEYS = {
 export const STORAGE_PROBE_KEY = "calo:storage-probe";
 export const QUARANTINE_KEY_PREFIX = "calo:corrupt:";
 
+/**
+ * Pre-paint theme hint, written by `applyTheme` and read by the blocking script
+ * in the root layout. The authoritative preference lives in `calo:settings`
+ * (demo) or `account_preferences` (cloud); the cloud value only arrives after
+ * an authenticated fetch, which is too late for the first frame. This key is a
+ * display hint only and is never treated as a source of truth.
+ */
+export const THEME_HINT_KEY = "calo:theme";
+
 export function buildQuarantineKey(
   key: StorageKey,
   timestamp = Date.now(),

@@ -1,3 +1,4 @@
+import { THEME_HINT_KEY } from "@/lib/storage/keys";
 import type { ThemePreference } from "@/types/domain";
 
 const DARK_MEDIA_QUERY = "(prefers-color-scheme: dark)";
@@ -40,24 +41,39 @@ export function isDarkTheme(
 }
 
 export function getThemeInitScript(): string {
-  return [
-    "(function () {",
-    "try {",
-    '  var raw = localStorage.getItem("calo:settings");',
-    '  var theme = "system";',
-    "  if (raw) {",
-    "    var parsed = JSON.parse(raw);",
-    '    if (parsed && parsed.data && ["light", "dark", "system"].indexOf(parsed.data.theme) !== -1) {',
-    "      theme = parsed.data.theme;",
-    "    }",
-    "  }",
-    `  var dark = theme === "dark" || (theme === "system" && window.matchMedia("(prefers-color-scheme: dark)").matches);`,
-    "  var root = document.documentElement;",
-    '  root.classList.toggle("dark", dark);',
-    '  root.style.colorScheme = dark ? "dark" : "light";',
-    "} catch (error) {}",
-    "})();",
-  ].join("");
+  return `(function () {
+  var theme = "system";
+  try {
+    var known = ["light", "dark", "system"];
+    var raw = localStorage.getItem("calo:settings");
+    if (raw) {
+      var parsed = JSON.parse(raw);
+      if (parsed && parsed.data && known.indexOf(parsed.data.theme) !== -1) {
+        theme = parsed.data.theme;
+      }
+    }
+    var hint = localStorage.getItem(${JSON.stringify(THEME_HINT_KEY)});
+    if (known.indexOf(hint) !== -1) {
+      theme = hint;
+    }
+  } catch (error) {
+    theme = "system";
+  }
+  try {
+    var dark = theme === "dark" || (theme === "system" && window.matchMedia("(prefers-color-scheme: dark)").matches);
+    var root = document.documentElement;
+    root.classList.toggle("dark", dark);
+    root.style.colorScheme = dark ? "dark" : "light";
+  } catch (error) {}
+})();`;
+}
+
+function writeThemeHint(theme: ThemePreference): void {
+  try {
+    window.localStorage.setItem(THEME_HINT_KEY, theme);
+  } catch {
+    // The hint only removes the first-paint flash; losing it is not an error.
+  }
 }
 
 export function applyTheme(
@@ -73,6 +89,7 @@ export function applyTheme(
   const root = document.documentElement;
   root.classList.toggle("dark", dark);
   root.style.colorScheme = dark ? "dark" : "light";
+  writeThemeHint(theme);
 
   return dark;
 }

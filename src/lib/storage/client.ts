@@ -20,6 +20,7 @@ import {
   QUARANTINE_KEY_PREFIX,
   STORAGE_KEYS,
   STORAGE_PROBE_KEY,
+  THEME_HINT_KEY,
 } from "./keys";
 import { migrations, runMigrations, type MigrationRegistry } from "./migrations";
 import { getSchemaVersion } from "./version";
@@ -430,7 +431,8 @@ export function resetAllStorage(
       if (
         isKnownStorageKey(storageKey) ||
         storageKey.startsWith(QUARANTINE_KEY_PREFIX) ||
-        storageKey === STORAGE_PROBE_KEY
+        storageKey === STORAGE_PROBE_KEY ||
+        storageKey === THEME_HINT_KEY
       ) {
         keysToRemove.push(storageKey);
       }

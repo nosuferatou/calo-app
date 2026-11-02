@@ -55,9 +55,59 @@ afterEach(() => {
 });
 
 describe("authentication proxy", () => {
-  it("keeps local-first settings public for anonymous users", async () => {
+  it("redirects anonymous requests to application routes to login", async () => {
     const response = await proxy(
       new NextRequest("http://127.0.0.1:3000/settings"),
+    );
+    const location = new URL(response.headers.get("location") ?? "");
+
+    expect(location.pathname).toBe("/login");
+    expect(location.searchParams.get("next")).toBe("/settings");
+  });
+
+  it("redirects anonymous root visits to login without a next parameter", async () => {
+    const response = await proxy(new NextRequest("http://127.0.0.1:3000/"));
+    const location = new URL(response.headers.get("location") ?? "");
+
+    expect(location.pathname).toBe("/login");
+    expect(location.searchParams.get("next")).toBeNull();
+  });
+
+  it("admits anonymous demo-opted-in visitors to application routes", async () => {
+    const response = await proxy(
+      new NextRequest("http://127.0.0.1:3000/", {
+        headers: { cookie: "calo-demo-mode=1" },
+      }),
+    );
+
+    expect(response.status).toBe(200);
+    expect(response.headers.get("x-middleware-next")).toBe("1");
+  });
+
+  it("keeps auth-flow routes public for anonymous users", async () => {
+    for (const path of [
+      "/login",
+      "/signup",
+      "/forgot-password",
+      "/reset-password",
+      "/auth/callback?code=test",
+    ]) {
+      const response = await proxy(
+        new NextRequest(`http://127.0.0.1:3000${path}`),
+      );
+
+      expect(response.status, path).toBe(200);
+    }
+  });
+
+  it("admits verified users to application routes", async () => {
+    mocks.getClaims.mockResolvedValue({
+      data: { claims: { sub: "verified-user" } },
+      error: null,
+    });
+
+    const response = await proxy(
+      new NextRequest("http://127.0.0.1:3000/diary"),
     );
 
     expect(response.status).toBe(200);

@@ -47,3 +47,7 @@ next-env.d.ts
 # vendored skill engine binaries: the launchers download and checksum these
 # per user (~/.impeccable/bin/<version>), so they are never committed
 .agents/skills/**/scripts/bin/
+
+.vercel
+.env*
+!.env.example

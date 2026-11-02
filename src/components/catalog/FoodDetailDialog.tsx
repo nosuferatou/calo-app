@@ -8,8 +8,8 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
+  DialogActionBar,
   DialogDescription,
-  DialogFooter,
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
@@ -126,7 +126,7 @@ export function FoodDetailDialog({ food, onOpenChange }: FoodDetailDialogProps) 
         </p>
       </div>
 
-      <DialogFooter className="flex-row justify-end">
+      <DialogActionBar className="flex-row justify-end">
         <Button
           type="button"
           variant="outline"
@@ -145,7 +145,7 @@ export function FoodDetailDialog({ food, onOpenChange }: FoodDetailDialogProps) 
           <Plus className="size-4" aria-hidden="true" />
           {t("catalog.addToCart")}
         </Button>
-      </DialogFooter>
+      </DialogActionBar>
     </Dialog>
   );
 }

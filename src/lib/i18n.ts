@@ -205,6 +205,8 @@ export const en = {
   "cart.nameRequired": "Enter a meal name.",
   "cart.dateHelp":
     "Today's date is used by default. Select another date in Food Diary before adding historical meals.",
+  "demoMode.notice":
+    "Data stays in this browser and is not synced to an account.",
   "diary.title": "Food Diary",
   "diary.subtitle":
     "Review and manage your food logs by date and meal category.",
@@ -355,6 +357,7 @@ export const en = {
   "analytics.addWeight": "Add weight",
   "analytics.weightKg": "Weight (kg)",
   "analytics.weightDate": "Date",
+  "analytics.weightInvalid": "Enter a valid weight greater than 0 kg.",
   "analytics.weightSaved": "Weight record saved.",
   "analytics.weightUpdated": "Weight record updated.",
   "analytics.weightDeleted": "Weight record deleted.",
@@ -603,11 +606,6 @@ export const en = {
   "onboarding.targetsSection": "Daily targets",
   "onboarding.reviewSection": "Review",
   "onboarding.notSet": "Not set",
-  "placeholder.underConstruction": "Under Construction",
-  "placeholder.description":
-    "This module is not implemented yet. The route exists so navigation stays honest.",
-  "placeholder.planned":
-    "Planned work for this module will appear here once the related phase is implemented.",
   "error.title": "This page could not load",
   "error.description":
     "CALO could not finish this action. Your saved data has not been changed. Try again.",
@@ -653,12 +651,17 @@ export const en = {
   "auth.label.confirmPassword": "Confirm password",
   "auth.password.show": "Show password",
   "auth.password.hide": "Hide password",
+  "auth.password.showShort": "Show",
+  "auth.password.hideShort": "Hide",
   "auth.action.login": "Sign in",
   "auth.action.signup": "Create account",
   "auth.action.forgot": "Send recovery instructions",
   "auth.action.reset": "Save new password",
   "auth.action.google": "Continue with Google",
   "auth.action.signOut": "Sign out",
+  "auth.action.demo": "Try the demo",
+  "auth.demo.hint":
+    "Explore CALO with sample data that stays in this browser. No account needed.",
   "auth.loading": "Please wait…",
   "auth.link.forgot": "Forgot password?",
   "auth.link.signupPrompt": "New to CALO?",
@@ -898,6 +901,8 @@ export const id: Record<TranslationKey, string> = {
   "cart.nameRequired": "Masukkan nama makan.",
   "cart.dateHelp":
     "Tanggal hari ini dipakai secara bawaan. Pilih tanggal lain di Diari sebelum menambah makan historis.",
+  "demoMode.notice":
+    "Data tetap di browser ini dan tidak disinkronkan ke akun.",
   "diary.title": "Diari Makan",
   "diary.subtitle":
     "Tinjau dan kelola catatan makan berdasarkan tanggal dan kategori.",
@@ -1048,6 +1053,7 @@ export const id: Record<TranslationKey, string> = {
   "analytics.addWeight": "Tambah berat",
   "analytics.weightKg": "Berat (kg)",
   "analytics.weightDate": "Tanggal",
+  "analytics.weightInvalid": "Masukkan berat valid lebih dari 0 kg.",
   "analytics.weightSaved": "Catatan berat disimpan.",
   "analytics.weightUpdated": "Catatan berat diperbarui.",
   "analytics.weightDeleted": "Catatan berat dihapus.",
@@ -1298,11 +1304,6 @@ export const id: Record<TranslationKey, string> = {
   "onboarding.targetsSection": "Target harian",
   "onboarding.reviewSection": "Tinjau",
   "onboarding.notSet": "Belum diatur",
-  "placeholder.underConstruction": "Sedang Dikerjakan",
-  "placeholder.description":
-    "Modul ini belum diimplementasikan. Rute tersedia agar navigasi tetap jujur.",
-  "placeholder.planned":
-    "Pekerjaan yang direncanakan untuk modul ini akan muncul setelah fase terkait diimplementasikan.",
   "error.title": "Halaman ini tidak dapat dimuat",
   "error.description":
     "CALO tidak dapat menyelesaikan tindakan ini. Data tersimpan Anda tidak berubah. Coba lagi.",
@@ -1348,12 +1349,17 @@ export const id: Record<TranslationKey, string> = {
   "auth.label.confirmPassword": "Konfirmasi kata sandi",
   "auth.password.show": "Tampilkan kata sandi",
   "auth.password.hide": "Sembunyikan kata sandi",
+  "auth.password.showShort": "Lihat",
+  "auth.password.hideShort": "Sembunyi",
   "auth.action.login": "Masuk",
   "auth.action.signup": "Buat akun",
   "auth.action.forgot": "Kirim petunjuk pemulihan",
   "auth.action.reset": "Simpan kata sandi baru",
   "auth.action.google": "Lanjutkan dengan Google",
   "auth.action.signOut": "Keluar",
+  "auth.action.demo": "Coba mode demo",
+  "auth.demo.hint":
+    "Jelajahi CALO dengan data contoh yang tetap tersimpan di browser ini. Tanpa akun.",
   "auth.loading": "Mohon tunggu…",
   "auth.link.forgot": "Lupa kata sandi?",
   "auth.link.signupPrompt": "Belum menggunakan CALO?",

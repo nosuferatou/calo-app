@@ -9,7 +9,11 @@ import {
   resetAllStorage,
   writeStorage,
 } from "@/lib/storage/client";
-import { QUARANTINE_KEY_PREFIX, STORAGE_KEYS } from "@/lib/storage/keys";
+import {
+  QUARANTINE_KEY_PREFIX,
+  STORAGE_KEYS,
+  THEME_HINT_KEY,
+} from "@/lib/storage/keys";
 import { getSchemaVersion } from "@/lib/storage/version";
 import type { UserProfile } from "@/types/domain";
 
@@ -324,10 +328,12 @@ describe("storage client", () => {
   it("resets only CALO keys and leaves unrelated data alone", () => {
     writeStorage(STORAGE_KEYS.profile, profile);
     localStorage.setItem(`${QUARANTINE_KEY_PREFIX}${STORAGE_KEYS.profile}:1`, "x");
+    localStorage.setItem(THEME_HINT_KEY, "light");
     localStorage.setItem("unrelated-app", "keep-me");
 
     expect(resetAllStorage({ confirmed: true })).toEqual({ status: "ok" });
     expect(localStorage.getItem(STORAGE_KEYS.profile)).toBeNull();
+    expect(localStorage.getItem(THEME_HINT_KEY)).toBeNull();
     expect(listQuarantineRecords()).toHaveLength(0);
     expect(localStorage.getItem("unrelated-app")).toBe("keep-me");
   });

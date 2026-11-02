@@ -21,6 +21,7 @@ import { RepositoryError, type Repositories } from "@/lib/repositories";
 import { CUSTOM_FOOD_SOURCE } from "@/lib/custom-foods";
 import { nowIso } from "@/lib/datetime";
 import { parseDateKey, todayKey, toDateKey } from "@/lib/dates";
+import { applyTheme } from "@/lib/theme";
 import { groupEntriesByDate, scaleFoodNutrition } from "@/lib/nutrition";
 import { sortWeightRecords } from "@/lib/weights";
 import { groupEntriesIntoSessions, suggestMealCategory } from "@/lib/meals";
@@ -467,6 +468,13 @@ export function CloudDataProvider({
     }),
     [language, saveLanguage, saveTheme, theme],
   );
+
+  useEffect(() => {
+    if (!hydrated) return;
+    // The account preference arrives after the first paint, so apply it here and
+    // let applyTheme refresh the pre-paint hint for the next load.
+    applyTheme(theme);
+  }, [hydrated, theme]);
 
   useEffect(() => {
     if (!hydrated || isProfileComplete(profile) || pathname === "/onboarding") return;

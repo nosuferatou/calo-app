@@ -1,11 +1,23 @@
 import { afterEach, describe, expect, it } from "vitest";
-import { applyTheme, getThemeInitScript, isDarkTheme } from "@/lib/theme";
+import {
+  applyTheme,
+  getThemeInitScript,
+  isDarkTheme,
+} from "@/lib/theme";
+import { THEME_HINT_KEY } from "@/lib/storage/keys";
+
+function writeSettings(theme: string) {
+  localStorage.setItem(
+    "calo:settings",
+    JSON.stringify({ version: 1, data: { theme, language: "en" } }),
+  );
+}
 
 describe("theme helpers", () => {
   afterEach(() => {
     document.documentElement.classList.remove("dark");
     document.documentElement.style.colorScheme = "";
-    localStorage.removeItem("calo:settings");
+    localStorage.clear();
   });
 
   it("treats the light theme as not dark", () => {
@@ -63,5 +75,37 @@ describe("theme helpers", () => {
     expect(applyTheme("light")).toBe(false);
     expect(document.documentElement.classList.contains("dark")).toBe(false);
     expect(document.documentElement.style.colorScheme).toBe("light");
+  });
+
+  it("paints the last rendered theme before the stored settings", () => {
+    // A cloud account keeps its preference in account_preferences, so the
+    // settings envelope can hold a stale value from an earlier demo session.
+    writeSettings("dark");
+    localStorage.setItem(THEME_HINT_KEY, "light");
+
+    window.eval(getThemeInitScript());
+
+    expect(document.documentElement.classList.contains("dark")).toBe(false);
+    expect(document.documentElement.style.colorScheme).toBe("light");
+  });
+
+  it("ignores an unknown hint value and keeps the stored settings", () => {
+    writeSettings("dark");
+    localStorage.setItem(THEME_HINT_KEY, "sepia");
+
+    window.eval(getThemeInitScript());
+
+    expect(document.documentElement.classList.contains("dark")).toBe(true);
+    expect(document.documentElement.style.colorScheme).toBe("dark");
+  });
+
+  it("refreshes the hint every time a theme is applied", () => {
+    expect(localStorage.getItem(THEME_HINT_KEY)).toBeNull();
+
+    applyTheme("dark");
+    expect(localStorage.getItem(THEME_HINT_KEY)).toBe("dark");
+
+    applyTheme("light");
+    expect(localStorage.getItem(THEME_HINT_KEY)).toBe("light");
   });
 });

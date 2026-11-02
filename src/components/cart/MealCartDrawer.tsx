@@ -138,7 +138,7 @@ export function MealCartDrawer() {
     <Dialog
       open={cartOpen}
       onOpenChange={closeCart}
-      className="inset-x-0 bottom-0 top-auto max-h-[88vh] w-full max-w-none translate-x-0 translate-y-0 overflow-y-auto rounded-t-2xl rounded-b-none p-5 sm:inset-y-0 sm:right-0 sm:left-auto sm:top-0 sm:bottom-0 sm:h-full sm:max-h-none sm:max-w-md sm:rounded-none sm:rounded-l-2xl sm:p-6"
+      className="inset-x-0 bottom-0 top-auto max-h-[88dvh] w-full max-w-none translate-x-0 translate-y-0 overflow-y-auto overscroll-contain rounded-t-2xl rounded-b-none p-5 pb-[max(1.25rem,env(safe-area-inset-bottom))] sm:inset-y-0 sm:right-0 sm:left-auto sm:top-0 sm:bottom-0 sm:h-full sm:max-h-none sm:max-w-md sm:rounded-none sm:rounded-l-2xl sm:p-6 sm:pb-6"
     >
         <DialogHeader className="flex-row items-start justify-between gap-4">
           <div className="space-y-1.5">

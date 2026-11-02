@@ -26,7 +26,7 @@ import { notifyLanguageChange } from "@/lib/language";
 import { groupEntriesIntoSessions, suggestMealCategory } from "@/lib/meals";
 import { groupEntriesByDate } from "@/lib/nutrition";
 import { scaleFoodNutrition } from "@/lib/nutrition";
-import { notifyThemeChange } from "@/lib/theme";
+import { applyTheme, notifyThemeChange } from "@/lib/theme";
 import { sortWeightRecords } from "@/lib/weights";
 import {
   readStorage,
@@ -143,10 +143,6 @@ function createId(prefix: string): string {
     .slice(2, 8)}`;
 }
 
-function sortWeights(records: WeightRecord[]): WeightRecord[] {
-  return sortWeightRecords(records);
-}
-
 function sortCustomFoods(foods: CustomFood[]): CustomFood[] {
   return [...foods].sort((a, b) => a.name.localeCompare(b.name));
 }
@@ -175,7 +171,7 @@ export function DemoDataProvider({ children }: { children: ReactNode }) {
   const [entries, setEntries] = useState<FoodEntry[]>(mockDiaryEntries);
   const [customFoods, setCustomFoods] = useState<CustomFood[]>([]);
   const [weightRecords, setWeightRecords] =
-    useState<WeightRecord[]>(sortWeights(mockWeightRecords));
+    useState<WeightRecord[]>(sortWeightRecords(mockWeightRecords));
   const [favorites, setFavorites] = useState<FavoriteFood[]>(mockFavorites);
   const [savedMeals, setSavedMeals] = useState<SavedMeal[]>(mockSavedMeals);
   const [searchHistory, setSearchHistory] = useState<string[]>([]);
@@ -190,6 +186,16 @@ export function DemoDataProvider({ children }: { children: ReactNode }) {
   // use of an effect, so the compiler's set-state-in-effect rule is disabled
   // for this block only.
   /* eslint-disable react-hooks/set-state-in-effect */
+  useEffect(() => {
+    // Re-apply the stored preference on mount: the init script covers the first
+    // paint, but this keeps the DOM in sync after client-side navigation.
+    const settingsResult = readStorage(STORAGE_KEYS.settings);
+
+    if (settingsResult.status === "ok") {
+      applyTheme(settingsResult.data.theme);
+    }
+  }, []);
+
   useEffect(() => {
     const profileResult = readStorage(STORAGE_KEYS.profile);
 
@@ -218,7 +224,7 @@ export function DemoDataProvider({ children }: { children: ReactNode }) {
     const weightResult = readStorage(STORAGE_KEYS.weightRecords);
 
     if (weightResult.status === "ok" && Array.isArray(weightResult.data.records)) {
-      setWeightRecords(sortWeights(weightResult.data.records));
+      setWeightRecords(sortWeightRecords(weightResult.data.records));
     } else if (weightResult.status === "missing") {
       writeStorage(STORAGE_KEYS.weightRecords, { records: mockWeightRecords });
     }
@@ -316,7 +322,7 @@ export function DemoDataProvider({ children }: { children: ReactNode }) {
   );
 
   const persistWeights = useCallback((records: WeightRecord[]) => {
-    const sorted = sortWeights(records);
+    const sorted = sortWeightRecords(records);
     setWeightRecords(sorted);
     writeStorage(STORAGE_KEYS.weightRecords, { records: sorted });
   }, []);
@@ -926,7 +932,7 @@ export function DemoDataProvider({ children }: { children: ReactNode }) {
       setProfile(backup.profile as UserProfile);
       setTargets(backup.targets as NutritionTargets);
       setEntries(backup.entries as FoodEntry[]);
-      setWeightRecords(sortWeights(backup.weightRecords as WeightRecord[]));
+      setWeightRecords(sortWeightRecords(backup.weightRecords as WeightRecord[]));
       setFavorites(backup.favorites as FavoriteFood[]);
       setSavedMeals(backup.savedMeals as SavedMeal[]);
 
@@ -954,7 +960,7 @@ export function DemoDataProvider({ children }: { children: ReactNode }) {
     setProfile(mockUserProfile);
     setTargets(mockNutritionTargets);
     setEntries(mockDiaryEntries);
-    setWeightRecords(sortWeights(mockWeightRecords));
+    setWeightRecords(sortWeightRecords(mockWeightRecords));
     setFavorites(mockFavorites);
     setSavedMeals(mockSavedMeals);
     setCustomFoods([]);

@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { useI18n } from "@/hooks/use-i18n";
+import { clearDemoModeOptIn } from "@/lib/auth/demo-mode";
 import { createClient } from "@/lib/supabase/client";
 import { cn } from "@/lib/utils";
 
@@ -54,6 +55,9 @@ export function SignOutButton({ className }: { className?: string }) {
         return;
       }
 
+      // Sign-out returns the visitor to the login gate; a stale demo opt-in
+      // must not silently drop them back into the demo dashboard.
+      clearDemoModeOptIn();
       router.replace("/login");
       router.refresh();
     } catch {

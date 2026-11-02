@@ -159,7 +159,7 @@ export function ToastViewport({
     <>
       <ToastAnnouncer toasts={toasts} />
       {toasts.length > 0 ? (
-        <div className="pointer-events-none fixed inset-x-4 bottom-20 z-50 flex flex-col items-end gap-2 md:inset-x-auto md:right-6 md:bottom-6 md:w-96">
+        <div className="pointer-events-none fixed inset-x-4 bottom-[calc(8.5rem+env(safe-area-inset-bottom))] z-50 flex flex-col items-end gap-2 md:inset-x-auto md:right-6 md:bottom-6 md:w-96">
           {toasts.map((toast) => (
             <ToastCard key={toast.id} toast={toast} onDismiss={onDismiss} />
           ))}

@@ -28,6 +28,19 @@ vi.mock("next/navigation", () => ({
   useRouter: () => mocks.router,
 }));
 
+const demoNavigations = vi.hoisted(() => [] as string[]);
+
+vi.mock("@/lib/auth/demo-mode", async (importOriginal) => {
+  const actual = await importOriginal<typeof import("@/lib/auth/demo-mode")>();
+  return {
+    ...actual,
+    enterDemoMode: (path: string) => {
+      actual.optInToDemoMode();
+      demoNavigations.push(path);
+    },
+  };
+});
+
 vi.mock("next/link", () => ({
   default: ({
     href,
@@ -134,6 +147,28 @@ describe("AuthForm", () => {
         "/auth/complete?next=%2Fsettings",
       );
     });
+  });
+
+  it("enters demo mode only through the explicit opt-in action", () => {
+    document.cookie = "calo-demo-mode=; path=/; max-age=0";
+    demoNavigations.length = 0;
+    render(<AuthForm mode="login" nextPath="/diary" />);
+
+    const demoButton = screen.getByRole("button", { name: "Try the demo" });
+    fireEvent.click(demoButton);
+
+    expect(document.cookie).toContain("calo-demo-mode=1");
+    expect(demoNavigations).toEqual(["/diary"]);
+    expect(mocks.router.replace).not.toHaveBeenCalled();
+    document.cookie = "calo-demo-mode=; path=/; max-age=0";
+  });
+
+  it("does not offer the demo action outside the login screen", () => {
+    render(<AuthForm mode="signup" />);
+
+    expect(
+      screen.queryByRole("button", { name: "Try the demo" }),
+    ).not.toBeInTheDocument();
   });
 
   it("completes signup immediately when local Auth returns a session", async () => {

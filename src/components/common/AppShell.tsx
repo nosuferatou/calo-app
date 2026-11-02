@@ -3,6 +3,7 @@
 import type { ReactNode } from "react";
 import { usePathname } from "next/navigation";
 import { ShoppingBasket } from "lucide-react";
+import { DemoModeNotice } from "@/components/auth/DemoModeNotice";
 import { MealCartDrawer } from "@/components/cart/MealCartDrawer";
 import { AppDataProvider } from "@/components/providers/AppDataProvider";
 import { useDemoData } from "@/components/providers/DemoDataProvider";
@@ -74,7 +75,12 @@ function AppShellContent({ children }: AppShellProps) {
         </a>
         <Navigation />
         <div className="md:pl-60">
-          {dataMode === "demo" ? <StorageStatusBanner /> : null}
+          {dataMode === "demo" ? (
+            <>
+              <DemoModeNotice />
+              <StorageStatusBanner />
+            </>
+          ) : null}
           <main
             id="main-content"
             tabIndex={-1}

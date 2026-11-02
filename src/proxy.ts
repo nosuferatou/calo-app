@@ -1,10 +1,20 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 import { getSafeReturnPath } from "@/lib/auth/paths";
+import { DEMO_COOKIE_NAME, DEMO_COOKIE_VALUE } from "@/lib/auth/demo-mode";
 import { getSupabaseConfig } from "@/lib/supabase/config";
 import type { Database } from "@/types/database";
 
-const PRIVATE_PATHS = ["/auth/complete"];
+// Auth-flow routes that anonymous visitors must reach. Everything else that
+// passes the matcher is an application route and requires a session or an
+// explicit demo opt-in (UX gate only — cloud data stays behind claims + RLS).
+const PUBLIC_PATHS = [
+  "/login",
+  "/signup",
+  "/forgot-password",
+  "/reset-password",
+  "/auth/callback",
+];
 const AUTH_ENTRY_PATHS = ["/login", "/signup"];
 
 function matchesPath(pathname: string, paths: string[]) {
@@ -62,14 +72,24 @@ export async function proxy(request: NextRequest) {
   const { data: claimsData } = await supabase.auth.getClaims();
   const claims = claimsData?.claims;
   const pathname = request.nextUrl.pathname;
+  const isAuthenticated =
+    typeof claims?.sub === "string" && claims.sub.length > 0;
 
-  if (matchesPath(pathname, PRIVATE_PATHS) && !claims?.sub) {
+  if (!isAuthenticated) {
+    const demoOptIn =
+      request.cookies.get(DEMO_COOKIE_NAME)?.value === DEMO_COOKIE_VALUE;
+    if (matchesPath(pathname, PUBLIC_PATHS) || demoOptIn) {
+      return supabaseResponse;
+    }
+
     const requestedPath = `${pathname}${request.nextUrl.search}`;
     const loginUrl = new URL("/login", request.url);
-    loginUrl.searchParams.set(
-      "next",
-      getSafeReturnPath(requestedPath, "/"),
-    );
+    if (requestedPath !== "/") {
+      loginUrl.searchParams.set(
+        "next",
+        getSafeReturnPath(requestedPath, "/"),
+      );
+    }
     return redirectWithAuthState(
       request,
       supabaseResponse,
@@ -79,7 +99,6 @@ export async function proxy(request: NextRequest) {
 
   if (
     matchesPath(pathname, AUTH_ENTRY_PATHS) &&
-    claims?.sub &&
     !request.nextUrl.searchParams.has("error")
   ) {
     const nextPath = getSafeReturnPath(

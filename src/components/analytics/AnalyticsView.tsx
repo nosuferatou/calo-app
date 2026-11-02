@@ -16,6 +16,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
+  DialogActionBar,
   DialogDescription,
   DialogFooter,
   DialogHeader,
@@ -31,6 +32,7 @@ import {
   sumFoodEntries,
 } from "@/lib/nutrition";
 import { cn } from "@/lib/utils";
+import { sortWeightRecords } from "@/lib/weights";
 import type { WeightRecord } from "@/types";
 
 type Period = 7 | 30;
@@ -47,6 +49,7 @@ export function AnalyticsView() {
   const [weightDate, setWeightDate] = useState(todayKey());
   const [deleteTarget, setDeleteTarget] = useState<WeightRecord | null>(null);
   const [savingWeight, setSavingWeight] = useState(false);
+  const [weightError, setWeightError] = useState(false);
 
   const dateKeys = useMemo(() => lastDateKeys(period), [period]);
   const grouped = useMemo(() => groupEntriesByDate(entries), [entries]);
@@ -83,6 +86,11 @@ export function AnalyticsView() {
     });
   }, [dateKeys, weightRecords]);
 
+  const weightHistory = useMemo(
+    () => sortWeightRecords(weightRecords).reverse(),
+    [weightRecords],
+  );
+
   const weightData = useMemo(
     () =>
       periodWeights.map((record) => ({
@@ -99,6 +107,7 @@ export function AnalyticsView() {
 
   function openWeight(target: WeightTarget) {
     setWeightTarget(target);
+    setWeightError(false);
 
     if (target === "new") {
       setWeightValue("");
@@ -115,6 +124,7 @@ export function AnalyticsView() {
     const value = Number.parseFloat(weightValue);
 
     if (!Number.isFinite(value) || value <= 0) {
+      setWeightError(true);
       return;
     }
 
@@ -376,43 +386,41 @@ export function AnalyticsView() {
         )}
 
         <ul className="mt-4 divide-y divide-slate-200 dark:divide-slate-800">
-          {[...weightRecords]
-            .sort((a, b) => b.loggedAt.localeCompare(a.loggedAt))
-            .map((record) => (
-              <li
-                key={record.id}
-                className="flex flex-wrap items-center justify-between gap-2 py-2"
-              >
-                <div>
-                  <p className="text-sm font-medium tabular-nums text-slate-900 dark:text-white">
-                    {formatDecimal(record.weight, locale)} {t("common.kg")}
-                  </p>
-                  <p className="text-xs text-slate-500 dark:text-slate-400">
-                    {formatShortDate(toDateKey(new Date(record.loggedAt)), locale)}
-                  </p>
-                </div>
-                <div className="flex items-center gap-1">
-                  <Button
-                    type="button"
-                    variant="outline"
-                    size="sm"
-                    onClick={() => openWeight(record)}
-                    aria-label={t("analytics.editWeight")}
-                  >
-                    <Pencil className="size-4" aria-hidden="true" />
-                  </Button>
-                  <Button
-                    type="button"
-                    variant="outline"
-                    size="sm"
-                    onClick={() => setDeleteTarget(record)}
-                    aria-label={t("analytics.deleteWeight")}
-                  >
-                    <Trash2 className="size-4" aria-hidden="true" />
-                  </Button>
-                </div>
-              </li>
-            ))}
+          {weightHistory.map((record) => (
+            <li
+              key={record.id}
+              className="flex flex-wrap items-center justify-between gap-2 py-2"
+            >
+              <div>
+                <p className="text-sm font-medium tabular-nums text-slate-900 dark:text-white">
+                  {formatDecimal(record.weight, locale)} {t("common.kg")}
+                </p>
+                <p className="text-xs text-slate-500 dark:text-slate-400">
+                  {formatShortDate(toDateKey(new Date(record.loggedAt)), locale)}
+                </p>
+              </div>
+              <div className="flex items-center gap-1">
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={() => openWeight(record)}
+                  aria-label={t("analytics.editWeight")}
+                >
+                  <Pencil className="size-4" aria-hidden="true" />
+                </Button>
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setDeleteTarget(record)}
+                  aria-label={t("analytics.deleteWeight")}
+                >
+                  <Trash2 className="size-4" aria-hidden="true" />
+                </Button>
+              </div>
+            </li>
+          ))}
         </ul>
       </section>
 
@@ -443,7 +451,12 @@ export function AnalyticsView() {
               step="0.1"
               inputMode="decimal"
               value={weightValue}
-              onChange={(event) => setWeightValue(event.target.value)}
+              aria-invalid={weightError}
+              aria-describedby={weightError ? "weight-value-error" : undefined}
+              onChange={(event) => {
+                setWeightValue(event.target.value);
+                setWeightError(false);
+              }}
             />
           </div>
           <div className="flex flex-col gap-1.5">
@@ -466,7 +479,16 @@ export function AnalyticsView() {
             />
           </div>
         </div>
-        <DialogFooter className="flex-row justify-end">
+        {weightError ? (
+          <p
+            id="weight-value-error"
+            role="alert"
+            className="mt-2 text-sm text-red-600 dark:text-red-400"
+          >
+            {t("analytics.weightInvalid")}
+          </p>
+        ) : null}
+        <DialogActionBar className="flex-row justify-end">
           <Button
             type="button"
             variant="outline"
@@ -477,7 +499,7 @@ export function AnalyticsView() {
           <Button type="button" onClick={saveWeight} disabled={savingWeight}>
             {savingWeight ? t("common.saving") : t("common.save")}
           </Button>
-        </DialogFooter>
+        </DialogActionBar>
       </Dialog>
 
       <Dialog

@@ -11,6 +11,7 @@ import {
   getAuthCallbackUrl,
   getSafeReturnPath,
 } from "@/lib/auth/paths";
+import { enterDemoMode } from "@/lib/auth/demo-mode";
 import {
   isGoogleOAuthEnabled,
   validateAuthForm,
@@ -409,6 +410,25 @@ export function AuthForm({
         </div>
       ) : null}
 
+      {mode === "login" ? (
+        <div className="mt-4 space-y-2">
+          <Button
+            className="h-11 w-full"
+            type="button"
+            variant="outline"
+            disabled={loadingAction !== null}
+            onClick={() => {
+              enterDemoMode(safeNextPath);
+            }}
+          >
+            {t("auth.action.demo")}
+          </Button>
+          <p className="text-center text-xs text-muted-foreground">
+            {t("auth.demo.hint")}
+          </p>
+        </div>
+      ) : null}
+
       {mode === "signup" ? (
         <p className="mt-5 text-center text-sm text-muted-foreground">
           {t("auth.link.loginPrompt")}{" "}
@@ -500,12 +520,12 @@ function PasswordField({
           aria-describedby={error ? `${id}-error` : undefined}
         />
         <button
-          className="absolute inset-y-0 right-1 min-w-16 px-2 text-xs font-medium text-brand-700 underline-offset-4 hover:underline active:opacity-80 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600 dark:text-brand-400"
+          className="absolute inset-y-0 right-1 min-w-16 whitespace-nowrap px-2 text-xs font-medium text-brand-700 underline-offset-4 hover:underline active:opacity-80 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600 dark:text-brand-400"
           type="button"
           onClick={onToggle}
           aria-label={showLabel}
         >
-          {visible ? t("auth.password.hide") : t("auth.password.show")}
+          {visible ? t("auth.password.hideShort") : t("auth.password.showShort")}
         </button>
       </div>
       {error ? (
