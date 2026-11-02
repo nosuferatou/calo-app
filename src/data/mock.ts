@@ -14,6 +14,16 @@ import type {
 
 const CREATED_AT = "2026-10-01T08:00:00.000Z";
 
+// Mirrors the app's `weightIso`/`entryIso` convention: build the timestamp from
+// the local date so a record logged on a given day keeps that local day in every
+// timezone. A fixed `T07:00:00.000Z` suffix would drift to the previous local day
+// in negative UTC offsets and would sort after app-generated same-day records.
+function localIso(dateKey: string, hour: number, minute: number): string {
+  const date = parseDateKey(dateKey);
+  date.setHours(hour, minute, 0, 0);
+  return date.toISOString();
+}
+
 export const mockUserProfile: UserProfile = {
   id: "user-mock-001",
   createdAt: CREATED_AT,
@@ -43,12 +53,12 @@ export const mockNutritionTargets: NutritionTargets = {
 };
 
 export const mockWeightRecords: WeightRecord[] = [
-  { id: "weight-mock-001", createdAt: CREATED_AT, updatedAt: CREATED_AT, weight: 80.2, loggedAt: `${addDays(todayKey(), -30)}T07:00:00.000Z` },
-  { id: "weight-mock-002", createdAt: CREATED_AT, updatedAt: CREATED_AT, weight: 79.8, loggedAt: `${addDays(todayKey(), -24)}T07:00:00.000Z` },
-  { id: "weight-mock-003", createdAt: CREATED_AT, updatedAt: CREATED_AT, weight: 79.5, loggedAt: `${addDays(todayKey(), -18)}T07:00:00.000Z` },
-  { id: "weight-mock-004", createdAt: CREATED_AT, updatedAt: CREATED_AT, weight: 79.1, loggedAt: `${addDays(todayKey(), -12)}T07:00:00.000Z` },
-  { id: "weight-mock-005", createdAt: CREATED_AT, updatedAt: CREATED_AT, weight: 78.9, loggedAt: `${addDays(todayKey(), -6)}T07:00:00.000Z` },
-  { id: "weight-mock-006", createdAt: CREATED_AT, updatedAt: CREATED_AT, weight: 78.6, loggedAt: `${todayKey()}T07:00:00.000Z` },
+  { id: "weight-mock-001", createdAt: CREATED_AT, updatedAt: CREATED_AT, weight: 80.2, loggedAt: localIso(addDays(todayKey(), -30), 7, 0) },
+  { id: "weight-mock-002", createdAt: CREATED_AT, updatedAt: CREATED_AT, weight: 79.8, loggedAt: localIso(addDays(todayKey(), -24), 7, 0) },
+  { id: "weight-mock-003", createdAt: CREATED_AT, updatedAt: CREATED_AT, weight: 79.5, loggedAt: localIso(addDays(todayKey(), -18), 7, 0) },
+  { id: "weight-mock-004", createdAt: CREATED_AT, updatedAt: CREATED_AT, weight: 79.1, loggedAt: localIso(addDays(todayKey(), -12), 7, 0) },
+  { id: "weight-mock-005", createdAt: CREATED_AT, updatedAt: CREATED_AT, weight: 78.9, loggedAt: localIso(addDays(todayKey(), -6), 7, 0) },
+  { id: "weight-mock-006", createdAt: CREATED_AT, updatedAt: CREATED_AT, weight: 78.6, loggedAt: localIso(todayKey(), 7, 0) },
 ];
 
 export const mockRecentSearches = ["nasi", "chicken", "tempeh"];
@@ -63,12 +73,6 @@ function getFood(id: string): Food {
   }
 
   return food;
-}
-
-function localIso(dateKey: string, hour: number, minute: number): string {
-  const date = parseDateKey(dateKey);
-  date.setHours(hour, minute, 0, 0);
-  return date.toISOString();
 }
 
 function makeEntry(options: {

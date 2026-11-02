@@ -26,10 +26,15 @@ export const en = {
   "cloud.loadingData": "Loading your account data…",
   "cloud.loadFailed": "Your account data could not be loaded. Check your connection and try again.",
   "cloud.writeFailed": "That change could not be saved to your account. Your input is still on this page.",
-  "cloud.partialSavedMeal": "The meal was created, but some food items were not saved. Review My Collection before trying again.",
+  "cloud.partialSavedMeal": "The meal could not be saved because some food items failed. It was rolled back, so nothing was added to My Collection. Please try again.",
+  "cloud.partialDiaryEntry": "Your diary entries could not be saved. The meal sessions created for them were rolled back, so nothing was logged. Please try again.",
   "cloud.sessionExpired": "Your sign-in session has expired. Sign in again to continue.",
   "cloud.signInAgain": "Sign in again",
   "cloud.retry": "Retry loading",
+  "cloud.identityTimeout":
+    "We could not confirm your sign-in because the request timed out. No account data was loaded. Check your connection and try again.",
+  "cloud.identityError":
+    "We could not confirm your sign-in. No account data was loaded. Check your connection and try again.",
   "cloud.profileMissing": "Your account profile is not available. Sign out and sign in again to retry profile setup.",
   "cloud.localDataToolsUnavailable": "Import, export, and reset apply only to local demo data. They do not change your account data.",
   "common.noData": "No data",
@@ -714,10 +719,15 @@ export const id: Record<TranslationKey, string> = {
   "cloud.loadingData": "Memuat data akun…",
   "cloud.loadFailed": "Data akun tidak dapat dimuat. Periksa koneksi lalu coba lagi.",
   "cloud.writeFailed": "Perubahan tidak dapat disimpan ke akun. Masukan Anda masih ada di halaman ini.",
-  "cloud.partialSavedMeal": "Menu berhasil dibuat, tetapi beberapa makanan gagal disimpan. Periksa Koleksi Saya sebelum mencoba lagi.",
+  "cloud.partialSavedMeal": "Menu tidak dapat disimpan karena beberapa makanan gagal disimpan. Menu dibatalkan, sehingga tidak ada yang ditambahkan ke Koleksi Saya. Silakan coba lagi.",
+  "cloud.partialDiaryEntry": "Entri diari tidak dapat disimpan. Sesi makan yang dibuat ikut dibatalkan, sehingga tidak ada yang tercatat. Silakan coba lagi.",
   "cloud.sessionExpired": "Sesi masuk Anda telah berakhir. Masuk kembali untuk melanjutkan.",
   "cloud.signInAgain": "Masuk kembali",
   "cloud.retry": "Coba muat lagi",
+  "cloud.identityTimeout":
+    "Kami tidak dapat memastikan status masuk Anda karena permintaan melebihi batas waktu. Tidak ada data akun yang dimuat. Periksa koneksi lalu coba lagi.",
+  "cloud.identityError":
+    "Kami tidak dapat memastikan status masuk Anda. Tidak ada data akun yang dimuat. Periksa koneksi lalu coba lagi.",
   "cloud.profileMissing": "Profil akun tidak tersedia. Keluar lalu masuk kembali untuk mencoba menyiapkan profil.",
   "cloud.localDataToolsUnavailable": "Fitur impor, ekspor, dan reset hanya berlaku untuk data demo lokal. Fitur ini tidak mengubah data akun.",
   "common.noData": "Tidak ada data",

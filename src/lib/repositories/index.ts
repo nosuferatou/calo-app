@@ -905,7 +905,9 @@ export function createRepositories(
         .from("weight_records")
         .select("*")
         .eq("user_id", userId)
-        .order("logged_at");
+        .order("logged_at")
+        .order("created_at", { ascending: true })
+        .order("id", { ascending: true });
       return requireRows(data, error).map(mapWeightRecord);
     },
     async create(value: Omit<WeightRecord, "createdAt" | "updatedAt">): Promise<WeightRecord> {

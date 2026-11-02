@@ -14,6 +14,7 @@ import { formatLongDate, todayKey } from "@/lib/dates";
 import { formatDecimal, formatNumber, formatSigned } from "@/lib/format";
 import { mealLabelKey, MEAL_ORDER } from "@/lib/meals";
 import { getCalorieStatus, groupEntriesByDate, sumFoodEntries } from "@/lib/nutrition";
+import { sortWeightRecords } from "@/lib/weights";
 import type { TranslationKey } from "@/lib/i18n";
 
 const statusLabelKeys: Record<string, TranslationKey> = {
@@ -60,8 +61,12 @@ export function DashboardView() {
     .sort((a, b) => b.loggedAt.localeCompare(a.loggedAt))
     .slice(0, 5);
 
-  const latestWeight = weightRecords[weightRecords.length - 1];
-  const previousWeight = weightRecords[weightRecords.length - 2];
+  const orderedWeights = useMemo(
+    () => sortWeightRecords(weightRecords),
+    [weightRecords],
+  );
+  const latestWeight = orderedWeights[orderedWeights.length - 1];
+  const previousWeight = orderedWeights[orderedWeights.length - 2];
   const weightChange =
     latestWeight && previousWeight ? latestWeight.weight - previousWeight.weight : 0;
 

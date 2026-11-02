@@ -69,6 +69,7 @@ export function DiaryView() {
     duplicateEntry,
     duplicateSession,
     entries,
+    setCartDate,
     updateEntry,
   } = useDemoData();
   const { locale, t } = useI18n();
@@ -95,6 +96,12 @@ export function DiaryView() {
     setMonthAnchor(dateKey);
     setExpanded({});
     setCopyMessage(null);
+  }
+
+  // Carry the diary's selected date into the meal cart so "Add food" logs to the
+  // day being viewed, not to today. The Links still navigate normally.
+  function addFoodForSelectedDate() {
+    setCartDate(selectedDate);
   }
 
   async function handleCopyPrevious() {
@@ -184,6 +191,7 @@ export function DiaryView() {
         <div className="flex flex-wrap gap-2">
           <Link
             href="/catalog"
+            onClick={addFoodForSelectedDate}
             className="inline-flex h-10 items-center justify-center gap-2 rounded-md bg-brand-600 px-4 text-sm font-medium text-white transition-colors hover:bg-brand-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600"
           >
             <Plus className="size-4" aria-hidden="true" />
@@ -327,6 +335,7 @@ export function DiaryView() {
               </p>
               <Link
                 href="/catalog"
+                onClick={addFoodForSelectedDate}
                 className="mt-5 inline-flex h-10 items-center justify-center rounded-md bg-brand-600 px-4 text-sm font-medium text-white transition-colors hover:bg-brand-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600"
               >
                 {t("diary.addFood")}
@@ -359,6 +368,7 @@ export function DiaryView() {
                       </div>
                       <Link
                         href="/catalog"
+                        onClick={addFoodForSelectedDate}
                         className="text-xs font-medium text-brand-700 hover:underline dark:text-brand-400"
                       >
                         {t("diary.addAnotherSession")}

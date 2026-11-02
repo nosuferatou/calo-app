@@ -27,6 +27,7 @@ import { groupEntriesIntoSessions, suggestMealCategory } from "@/lib/meals";
 import { groupEntriesByDate } from "@/lib/nutrition";
 import { scaleFoodNutrition } from "@/lib/nutrition";
 import { notifyThemeChange } from "@/lib/theme";
+import { sortWeightRecords } from "@/lib/weights";
 import {
   readStorage,
   resetAllStorage,
@@ -143,7 +144,7 @@ function createId(prefix: string): string {
 }
 
 function sortWeights(records: WeightRecord[]): WeightRecord[] {
-  return [...records].sort((a, b) => a.loggedAt.localeCompare(b.loggedAt));
+  return sortWeightRecords(records);
 }
 
 function sortCustomFoods(foods: CustomFood[]): CustomFood[] {

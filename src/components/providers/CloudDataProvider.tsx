@@ -22,6 +22,7 @@ import { CUSTOM_FOOD_SOURCE } from "@/lib/custom-foods";
 import { nowIso } from "@/lib/datetime";
 import { parseDateKey, todayKey, toDateKey } from "@/lib/dates";
 import { groupEntriesByDate, scaleFoodNutrition } from "@/lib/nutrition";
+import { sortWeightRecords } from "@/lib/weights";
 import { groupEntriesIntoSessions, suggestMealCategory } from "@/lib/meals";
 import type {
   CustomFood,
@@ -312,9 +313,11 @@ export function CloudDataProvider({
         return;
       }
       const message =
-        error instanceof RepositoryError && error.code === "partial-write"
-          ? t("cloud.partialSavedMeal")
-          : t("cloud.writeFailed");
+        error instanceof RepositoryError && error.code === "partial-diary-write"
+          ? t("cloud.partialDiaryEntry")
+          : error instanceof RepositoryError && error.code === "partial-write"
+            ? t("cloud.partialSavedMeal")
+            : t("cloud.writeFailed");
       toast({ title: message, variant: "error" });
     },
     [onSessionExpired, t, toast],
@@ -408,7 +411,7 @@ export function CloudDataProvider({
             ),
           );
           throw new RepositoryError(
-            "partial-write",
+            "partial-diary-write",
             "Meal sessions were created, but food entries could not be saved.",
           );
         }
@@ -1013,9 +1016,7 @@ export function CloudDataProvider({
         null,
       );
       if (!saved) return false;
-      setWeightRecords((current) =>
-        [...current, saved].sort((a, b) => a.loggedAt.localeCompare(b.loggedAt)),
-      );
+      setWeightRecords((current) => sortWeightRecords([...current, saved]));
       toast({ title: t("analytics.weightSaved"), variant: "success" });
       return true;
     },
@@ -1038,9 +1039,9 @@ export function CloudDataProvider({
       );
       if (!saved) return false;
       setWeightRecords((current) =>
-        current
-          .map((record) => (record.id === id ? saved : record))
-          .sort((a, b) => a.loggedAt.localeCompare(b.loggedAt)),
+        sortWeightRecords(
+          current.map((record) => (record.id === id ? saved : record)),
+        ),
       );
       toast({ title: t("analytics.weightUpdated"), variant: "success" });
       return true;

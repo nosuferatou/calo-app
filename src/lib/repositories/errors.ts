@@ -7,7 +7,8 @@ export type RepositoryErrorCode =
   | "database"
   | "invalid-input"
   | "invalid-record"
-  | "partial-write";
+  | "partial-write"
+  | "partial-diary-write";
 
 export class RepositoryError extends Error {
   constructor(
